@@ -21,7 +21,7 @@ pip install -r requirements.txt
 python ./crawler.py N # to get first N companies. N is optional, default is 10000
 ```
 
-Result is stored in `./data/training.json` in intermediate format:
+Result is stored in `./data/raw.json` in intermediate format:
 
 ```json
 [
@@ -33,14 +33,69 @@ Result is stored in `./data/training.json` in intermediate format:
   ...
 ```
 
-## Extracting features
+## Annotating abstracts
 
-TBD
+```bash
+python ./raw-to-annotated.py
+```
 
-## Training the model
+Result is stored in `./data/annotated.json` in intermediate format:
 
-TBD
+```json
+[
+  {
+    "company": "2.13.61",
+    "location": "Estados Unidos",
+    "abstract": [
+      {
+        "S": [
+          [
+            "2.13.61",
+            "CD"
+          ],
+          [
+            ",",
+            ","
+          ],
+          [
+            "Inc.",
+            "NNP"
+          ],
+          [
+            "is",
+            "VBZ"
+          ],
+          [
+            "a",
+            "DT"
+          ],
+          [
+            "publisher",
+            "NN"
+  ...
+```
 
-## Evaluating the model
 
-TBD
+## [NOT IMPLEMENTED] Extracting features
+
+```bash
+python ./annotated-to-features.py
+```
+
+## [NOT IMPLEMENTED] Training the model
+
+```bash
+python ./features-to-model.py
+```
+
+## [NOT IMPLEMENTED] Evaluating the model
+
+```bash
+python ./evaluate-model.py -c "2.13.61" -a "2.13.61, Inc. is a publisher and record company founded by musician..."
+```
+
+## General training pipeline
+
+```bash
+./train-pipeline.sh
+```

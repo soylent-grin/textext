@@ -30,7 +30,7 @@ sparql.setReturnFormat(JSON)
 results = sparql.query().convert()
 
 targetPath = "./data"
-targetFile = "training.json"
+targetFile = "raw.json"
 print("done; serializing to {0}/{1} file...".format(targetPath, targetFile))
 
 if not os.path.exists(targetPath):
@@ -45,6 +45,6 @@ for result in results["results"]["bindings"]:
         "abstract": result["abstract_en"]["value"]
     })
 
-json.dump(targetJSON, open("./data/training.json", "w+"))
+json.dump(targetJSON, open("{0}/{1}".format(targetPath, targetFile), "w+"))
 
-print("done; ready to train")
+print("done; ready to annotate")

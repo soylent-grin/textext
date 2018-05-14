@@ -79,11 +79,23 @@ def performIterateQuery(q):
 def sparqlResultsToList(results):
     targetJSON = []
     for result in results["results"]["bindings"]:
+
+        # gwohlgen: changed, as this gave me an error:
+        # TypeError: Object of type 'bytes' is not JSON serializable
+
+        # targetJSON.append({
+        #     "company": result["companyNameStr"]["value"].encode('utf-8').strip(),
+        #     "location": result["locationNameStr"]["value"].encode('utf-8').strip(),
+        #     "abstract": result["abstractStr"]["value"].encode('utf-8').strip()
+        # })
         targetJSON.append({
-            "company": result["companyNameStr"]["value"].encode('utf-8').strip(),
-            "location": result["locationNameStr"]["value"].encode('utf-8').strip(),
-            "abstract": result["abstractStr"]["value"].encode('utf-8').strip()
+            "company": result["companyNameStr"]["value"].strip(),
+            "location": result["locationNameStr"]["value"].strip(),
+            "abstract": result["abstractStr"]["value"].strip()
         })
+
+
+
     return targetJSON
 
 def queryAndMerge():

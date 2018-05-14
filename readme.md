@@ -18,7 +18,7 @@ pip install -r requirements.txt
 ## Crawling training data
 
 ```bash
-python ./crawler.py N # to get first N companies. N is optional, default is 10000
+python ./crawler.py
 ```
 
 Result is stored in `./data/raw.json` in intermediate format:

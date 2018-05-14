@@ -13,7 +13,7 @@ OUTFN = ["src-train.txt", "tgt-train.txt",
 
 
 
-def load_data(distinct_abstracts=True, train_ratio=0.9):
+def load_data(distinct_abstracts=True, train_ratio=0.9, location_needs_to_be_in_abstract=False):
 
     with open(IN_FN) as f:
         data = json.load(f)
@@ -38,6 +38,8 @@ def load_data(distinct_abstracts=True, train_ratio=0.9):
 
         data=filt
 
+    if location_needs_to_be_in_abstract:
+        data = [d for d in data if d['location'] in d['abstract']] 
 
 
     split_border = int(train_ratio * len(data))
@@ -68,7 +70,7 @@ def write_nmt_datafiles(src, tgt, our_data):
   
 if __name__ == "__main__":
 
-    train, val = load_data(distinct_abstracts=True, train_ratio=0.8)
+    train, val = load_data(distinct_abstracts=True, train_ratio=0.8, location_needs_to_be_in_abstract=True)
 
     # write train and val data to files 
     write_nmt_datafiles(OUTFN[0], OUTFN[1], train)

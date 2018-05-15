@@ -1,4 +1,4 @@
-import json
+import json, random
 from pprint import pprint
 
 # ------------------------- CONFIG -----------------------
@@ -41,6 +41,7 @@ def load_data(distinct_abstracts=True, train_ratio=0.9, location_needs_to_be_in_
     if location_needs_to_be_in_abstract:
         data = [d for d in data if d['location'] in d['abstract']] 
 
+    random.shuffle(data)
 
     split_border = int(train_ratio * len(data))
 

@@ -106,8 +106,13 @@ def queryAndMerge():
         nthResult = performIterateQuery(q)
         targetJSON += nthResult
         print("got {0} items".format(len(nthResult)))
-    print("total items count is {0}".format(len(targetJSON)))
-    return targetJSON
+    print("total items count is {0}; fitering to find only abstracts with company name and location...".format(len(targetJSON)))
+    filteredJSON = []
+    for entry in targetJSON:
+        if entry["company"] in entry["abstract"] and entry["location"] in entry["abstract"]:
+            filteredJSON.append(entry)
+    print("total item count after filtering is {0}".format(len(filteredJSON)))
+    return filteredJSON
 
 def writeToFile(res):
     targetPath = "./data"

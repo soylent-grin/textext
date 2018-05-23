@@ -33,65 +33,50 @@ Result is stored in `./data/raw.json` in intermediate format:
   ...
 ```
 
-## Annotating abstracts
+## Extracting features
 
 ```bash
-python ./raw-to-annotated.py
+python ./raw-to-featureset.py
 ```
 
-Result is stored in `./data/annotated.json` in intermediate format:
+Result is stored in `./data/feature-set.json` in intermediate format:
 
 ```json
-[
-  {
-    "company": "2.13.61",
-    "location": "Estados Unidos",
-    "abstract": [
-      {
-        "S": [
-          [
-            "2.13.61",
-            "CD"
-          ],
-          [
-            ",",
-            ","
-          ],
-          [
-            "Inc.",
-            "NNP"
-          ],
-          [
-            "is",
-            "VBZ"
-          ],
-          [
-            "a",
-            "DT"
-          ],
-          [
-            "publisher",
-            "NN"
+  ...
+  [
+    {
+      "NE(South Australia)": true,
+      "NN(material)": true,
+      "words_count": 49,
+      "NN(mining)": true,
+      "NN(modelling)": true,
+      "NN(planning)": true,
+      "NN(turnover)": true,
+      "VB(Based)": true,
+      "VB(deployed)": true,
+      "NN(software)": true,
+      "NE(Adelaide)": true,
+      "VB(scheduling)": true,
+      "NN(supply)": true,
+      "VB(generated)": true,
+      "NN(%)": true,
+      "NE(SolveIT Software Pty Ltd)": true,
+      "NN(demand)": true,
+      "NN(provider)": true,
+      "VB(is)": true,
+      "NN(handling)": true,
+      "NN(optimisation)": true,
+      "NN(enterprise)": true
+    },
+    "Adelaide"
+  ],
   ...
 ```
 
-
-## [NOT IMPLEMENTED] Extracting features
-
-```bash
-python ./annotated-to-features.py
-```
-
-## [NOT IMPLEMENTED] Training the model
+## Evaluating the model
 
 ```bash
-python ./features-to-model.py
-```
-
-## [NOT IMPLEMENTED] Evaluating the model
-
-```bash
-python ./evaluate-model.py -c "2.13.61" -a "2.13.61, Inc. is a publisher and record company founded by musician..."
+python ./classifier.py
 ```
 
 ## General training pipeline

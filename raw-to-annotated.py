@@ -9,6 +9,10 @@ nltk.download('words')
 
 import os
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 print("hello; reading raw data...")
 
 raw = json.load(open('./data/raw.json'))
@@ -19,12 +23,13 @@ def tree2dict(tree):
     return {tree.label(): [tree2dict(t)  if isinstance(t, Tree) else t
                         for t in tree]}
 
-for entry in raw:
+for index, entry in enumerate(raw):
+    print("annotating entry {0}... \r".format(str(index + 1)))
     sentences = nltk.sent_tokenize(entry["abstract"])
     tokenized_sentences = [nltk.word_tokenize(sentence) for sentence in sentences]
     tagged_sentences = [nltk.pos_tag(sentence) for sentence in tokenized_sentences]
     chunked_sentences = nltk.ne_chunk_sents(tagged_sentences, binary=False)
- 
+
     annotated_text = []
     for tree in chunked_sentences:
         annotated_text.append(tree2dict(tree))

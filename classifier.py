@@ -3,24 +3,24 @@ import nltk
 
 from extract_features import extract_features
 
+featureset = json.load(open('./data/feature-set.json'))
 raw = json.load(open('./data/raw.json'))
 
-def get_featureset():
-    featureset = []
+train_to_test_ratio = 0.6
 
-    for entry in raw:
-        featureset.append((extract_features(entry), entry["location"]))
+divide_index = int(len(featureset) * train_to_test_ratio)
 
-    return featureset
+train_set, test_set = featureset[:divide_index], featureset[divide_index:]
 
-featureset = get_featureset()
-
-train_set, test_set = featureset[500:], featureset[:500]
-
-print("training classifier with {0} items".format(len(train_set)))
+print("training classifier with {0} items...".format(len(train_set)))
 classifier = nltk.NaiveBayesClassifier.train(train_set)
 
-print("done; classifying first entry from raw dataset:")
-print(raw[502])
+target_index = 1001
+print("done; classifying entry {0} from raw dataset:".format(target_index))
+print(raw[target_index])
 
-print(classifier.classify(extract_features(raw[502])))
+
+print("predicted location is: " + classifier.classify(extract_features(raw[target_index])))
+
+print("calculating model accuracy:")
+print(nltk.classify.accuracy(classifier, test_set))

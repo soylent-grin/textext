@@ -78,9 +78,3 @@ Result is stored in `./data/feature-set.json` in intermediate format:
 ```bash
 python ./classifier.py
 ```
-
-## General training pipeline
-
-```bash
-./train-pipeline.sh
-```

@@ -17,6 +17,8 @@ print("hello; reading raw data...")
 
 raw = json.load(open('./data/raw.json'))
 
+raw = raw[:10]
+
 print("done; annotating abstracts...")
 
 def tree2dict(tree):

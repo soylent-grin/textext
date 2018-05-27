@@ -10,11 +10,7 @@ nltk.download('averaged_perceptron_tagger')
 nltk.download('maxent_ne_chunker')
 nltk.download('words')
 
-def tree2dict(tree):
-    return {tree.label(): [tree2dict(t)  if isinstance(t, Tree) else t
-                        for t in tree]}
-
-def extract_locations(sent):
+def extract_locations_from_sent(sent):
     locations = []
 
     if hasattr(sent, 'label') and sent.label:
@@ -22,7 +18,7 @@ def extract_locations(sent):
             locations.append(' '.join([child[0] for child in sent]))
         else:
             for child in sent:
-                locations.extend(extract_locations(child))
+                locations.extend(extract_locations_from_sent(child))
 
     return locations
 
@@ -46,24 +42,6 @@ def extract_nowns(sent):
         if label == 'NN':
             nowns.append(word)
     return nowns;
-
-def extract_named_entities(sent):
-    entity_names = []
-
-    if hasattr(sent, 'label') and sent.label:
-        if sent.label() == 'NE':
-            entity_names.append(' '.join([child[0] for child in sent]))
-        else:
-            for child in sent:
-                entity_names.extend(extract_named_entities(child))
-
-    return entity_names
-
-def traverse_tree(tree):
-    print("tree:", tree)
-    for subtree in tree:
-        if type(subtree) == nltk.tree.Tree:
-            traverse_tree(subtree)
 
 def annotate(raw_entry):
     sentences = nltk.sent_tokenize(raw_entry["abstract"])
@@ -98,10 +76,13 @@ def extract_features_by_location(company, location, sent):
 
     return features
 
-def extract_features(raw_entry):
+def extract_locations(annotated_entry):
+    locations = []
+    for idx, sent in enumerate(annotated_entry["abstract_annotated"]):
+        locations += extract_locations_from_sent(sent)
+    return locations
 
-    annotated_entry = annotate(raw_entry)
-
+def extract_features(annotated_entry):
     featuresets = []
 
     for idx, sent in enumerate(annotated_entry["abstract_annotated"]):
@@ -109,7 +90,6 @@ def extract_features(raw_entry):
         # print("found locations: {0}".format(locations))
         for location in locations:
             featureset = extract_features_by_location(raw_entry["company"], location, annotated_entry["tagged_sentences"][idx])
-            featureset["correct"] = location == raw_entry["location"]
             featuresets.append(featureset)
 
     # print(featuresets)
@@ -129,3 +109,45 @@ def extract_features(raw_entry):
     # features["words_count"] = words_count
 
     return featuresets
+
+def prepare_training_set(raw_set):
+    print("preparing train set...")
+    training_set = []
+
+    for index, item in enumerate(raw_set):
+        sys.stdout.write("processing entry {0}... \r".format(str(index + 1)))
+        sys.stdout.flush()
+        annotated_item = annotate(item)
+        for idx, sent in enumerate(annotated_item["abstract_annotated"]):
+            locations = extract_locations_from_sent(sent)
+            for l in locations:
+                featureset = extract_features_by_location(item["company"], l, annotated_item["tagged_sentences"][idx])
+                training_set.append((featureset, l == item["location"]))
+
+    return training_set
+
+
+def prepare_predict_item(item):
+    predict_set = []
+    target_locations = []
+
+    annotated_item = annotate(item)
+    for idx, sent in enumerate(annotated_item["abstract_annotated"]):
+        locations = extract_locations_from_sent(sent)
+        for l in locations:
+            featureset = extract_features_by_location(item["company"], l, annotated_item["tagged_sentences"][idx])
+            predict_set.append(featureset)
+            target_locations.append(l)
+
+    print(target_locations)
+    return (predict_set, target_locations)
+
+def predict(classifier, item):
+    print("trying to predict location for item: ")
+    print(item)
+    predict_set, locations = prepare_predict_item(item)
+    print(predict_set, locations)
+    for idx, l in enumerate(locations):
+        print("predicting for location '{0}': {1}".format(l, classifier.classify(predict_set[idx])))
+
+

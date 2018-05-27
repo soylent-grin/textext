@@ -1,6 +1,6 @@
 import json, os, sys, nltk
 
-from extract_features import extract_features
+from helpers import prepare_training_set
 
 print("hello; reading raw data...")
 
@@ -8,16 +8,7 @@ raw = json.load(open('./data/raw.json'))
 
 print("done; extracting features...")
 
-def tree2dict(tree):
-    return {tree.label(): [tree2dict(t)  if isinstance(t, Tree) else t
-                        for t in tree]}
-
-feature_set = []
-for index, entry in enumerate(raw):
-    if index < 1000:
-        sys.stdout.write("processing entry {0}... \r".format(str(index + 1)))
-        sys.stdout.flush()
-        feature_set.append((extract_features(entry), entry["location"]))
+feature_set = prepare_training_set(raw[:10])
 
 targetPath = "./data"
 targetFile = "feature-set.json"

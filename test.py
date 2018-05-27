@@ -1,8 +1,8 @@
 import json, os
 import nltk
 
-from extract_features import extract_features
+from helpers import prepare_predict_item
 
 raw = json.load(open('./data/raw.json'))
 
-print((extract_features(raw[0])))
+print((prepare_predict_item(raw[0])))

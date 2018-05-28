@@ -36,7 +36,7 @@ Result is stored in `./data/raw.json` in intermediate format:
 ## Extracting features
 
 ```bash
-python ./raw-to-featureset.py
+python ./raw-to-featureset.py $COUNT # $COUNT is number of first raw entries to annotate. Default is 1000
 ```
 
 Result is stored in `./data/feature-set.json` in intermediate format:
@@ -62,10 +62,10 @@ Result is stored in `./data/feature-set.json` in intermediate format:
 ## Evaluating the model
 
 ```bash
-python ./classifier.py $INDEX # where $INDEX is index of item to predict in raw dataset
+python ./classifier.py $INDEX # where $INDEX is index of item to predict in raw dataset. Default is last
 ```
 
-## Printing list of features per entry
+## Printing list of extracted features per entry
 
 ```bash
 python ./test.py $INDEX # where $INDEX is index of item to predict in raw dataset

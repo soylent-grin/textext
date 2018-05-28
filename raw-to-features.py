@@ -8,7 +8,11 @@ raw = json.load(open('./data/raw.json'))
 
 print("done; extracting features...")
 
-feature_set = prepare_training_set(raw[:1000])
+count = 1000
+if len(sys.argv) > 1:
+    count = int(sys.argv[1])
+
+feature_set = prepare_training_set(raw[:count])
 
 targetPath = "./data"
 targetFile = "feature-set.json"

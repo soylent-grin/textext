@@ -64,3 +64,9 @@ Result is stored in `./data/feature-set.json` in intermediate format:
 ```bash
 python ./classifier.py $INDEX # where $INDEX is index of item to predict in raw dataset
 ```
+
+## Printing list of features per entry
+
+```bash
+python ./test.py $INDEX # where $INDEX is index of item to predict in raw dataset
+```

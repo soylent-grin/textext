@@ -25,7 +25,7 @@ def extract_locations_from_sent(sent):
 def extract_location_related_verbs(sent):
     verbs = []
     for (word, label) in sent:
-        if "locate" in word or "headquater" in word or "found" in word or "base" in word or "establish":
+        if "locate" in word or "headquart" in word or "found" in word or "base" in word or "establish" in word:
             verbs.append(word)
     return verbs;
 

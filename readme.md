@@ -45,30 +45,16 @@ Result is stored in `./data/feature-set.json` in intermediate format:
   ...
   [
     {
-      "NE(South Australia)": true,
-      "NN(material)": true,
-      "words_count": 49,
-      "NN(mining)": true,
-      "NN(modelling)": true,
-      "NN(planning)": true,
-      "NN(turnover)": true,
-      "VB(Based)": true,
-      "VB(deployed)": true,
-      "NN(software)": true,
-      "NE(Adelaide)": true,
-      "VB(scheduling)": true,
-      "NN(supply)": true,
-      "VB(generated)": true,
-      "NN(%)": true,
-      "NE(SolveIT Software Pty Ltd)": true,
-      "NN(demand)": true,
-      "NN(provider)": true,
+      "LOCATION_VERB(based)": true,
+      "NN(organization)": true,
+      "NN(policy)": true,
+      "NN(political-journalism)": true,
+      "VB(based)": true,
+      "VB(covers)": true,
       "VB(is)": true,
-      "NN(handling)": true,
-      "NN(optimisation)": true,
-      "NN(enterprise)": true
+      "distance": 23
     },
-    "Adelaide"
+    false
   ],
   ...
 ```
@@ -76,5 +62,5 @@ Result is stored in `./data/feature-set.json` in intermediate format:
 ## Evaluating the model
 
 ```bash
-python ./classifier.py
+python ./classifier.py $INDEX # where $INDEX is index of item to predict in raw dataset
 ```

@@ -25,7 +25,7 @@ def extract_locations_from_sent(sent):
 def extract_location_related_verbs(sent):
     verbs = []
     for (word, label) in sent:
-        if "located" in word or "headquatered" in word or "founded" in word or "based" in word:
+        if "locate" in word or "headquater" in word or "found" in word or "base" in word or "establish":
             verbs.append(word)
     return verbs;
 
@@ -54,7 +54,9 @@ def annotate(raw_entry):
         annotated_text.append(tree)
 
     raw_entry["abstract_annotated"] = annotated_text
+    raw_entry["tokenized_sentences"] = tokenized_sentences
     raw_entry["tagged_sentences"] = tagged_sentences
+    raw_entry["raw_sentences"] = sentences
 
     return raw_entry
 
@@ -62,16 +64,26 @@ def get_distance(company, location, sent):
     # TODO
     return 1;
 
-def extract_features_by_location(company, location, sent):
-    features = {}
+def get_words_between(company, location, raw_sent):
+    words = []
+    company_index = raw_sent.find(company)
+    if company_index > -1:
+        location_index = raw_sent.find(location)
+        if location_index > -1:
+            substr = raw_sent[company_index + len(company) + 1:location_index - 1]
+            words = nltk.pos_tag(nltk.word_tokenize(substr))
+    return words
 
-    features[location] = location
-    features["distance"] = get_distance(company, location, sent)
-    for vb in extract_verbs(sent):
+def extract_features_by_location(company, location, raw_sent):
+    features = {}
+    words_between = get_words_between(company, location, raw_sent)
+
+    features["distance"] = len(words_between)
+    for vb in extract_verbs(words_between):
         features["VB({0})".format(vb)] = True
-    for nown in extract_nowns(sent):
+    for nown in extract_nowns(words_between):
         features["NN({0})".format(nown)] = True
-    for vb in extract_location_related_verbs(sent):
+    for vb in extract_location_related_verbs(words_between):
         features["LOCATION_VERB({0})".format(vb)] = True
 
     return features
@@ -89,7 +101,7 @@ def extract_features(annotated_entry):
         locations = extract_locations(sent)
         # print("found locations: {0}".format(locations))
         for location in locations:
-            featureset = extract_features_by_location(raw_entry["company"], location, annotated_entry["tagged_sentences"][idx])
+            featureset = extract_features_by_location(raw_entry["company"], location, annotated_item["raw_sentences"][idx])
             featuresets.append(featureset)
 
     # print(featuresets)
@@ -121,7 +133,7 @@ def prepare_training_set(raw_set):
         for idx, sent in enumerate(annotated_item["abstract_annotated"]):
             locations = extract_locations_from_sent(sent)
             for l in locations:
-                featureset = extract_features_by_location(item["company"], l, annotated_item["tagged_sentences"][idx])
+                featureset = extract_features_by_location(item["company"], l, annotated_item["raw_sentences"][idx])
                 training_set.append((featureset, l == item["location"]))
 
     return training_set
@@ -135,18 +147,16 @@ def prepare_predict_item(item):
     for idx, sent in enumerate(annotated_item["abstract_annotated"]):
         locations = extract_locations_from_sent(sent)
         for l in locations:
-            featureset = extract_features_by_location(item["company"], l, annotated_item["tagged_sentences"][idx])
+            featureset = extract_features_by_location(item["company"], l, annotated_item["raw_sentences"][idx])
             predict_set.append(featureset)
             target_locations.append(l)
 
-    print(target_locations)
     return (predict_set, target_locations)
 
 def predict(classifier, item):
     print("trying to predict location for item: ")
     print(item)
     predict_set, locations = prepare_predict_item(item)
-    print(predict_set, locations)
     for idx, l in enumerate(locations):
         print("predicting for location '{0}': {1}".format(l, classifier.classify(predict_set[idx])))
 

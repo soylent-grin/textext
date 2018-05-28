@@ -1,8 +1,11 @@
-import json, os
+import json, os, sys
 import nltk
 
-from helpers import prepare_predict_item
+from helpers import prepare_training_set
 
 raw = json.load(open('./data/raw.json'))
 
-print((prepare_predict_item(raw[0])))
+index = int(sys.argv[1])
+
+print(raw[index])
+print((prepare_training_set(raw[index:index + 1])))

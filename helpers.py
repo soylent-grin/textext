@@ -1,5 +1,6 @@
 import nltk
 from nltk import Tree
+from constants import *
 
 import sys
 reload(sys)
@@ -134,7 +135,7 @@ def prepare_training_set(raw_set):
             locations = extract_locations_from_sent(sent)
             for l in locations:
                 featureset = extract_features_by_location(item["company"], l, annotated_item["raw_sentences"][idx])
-                training_set.append((featureset, l == item["location"]))
+                training_set.append((featureset, constructDecision(item["locationType"], l == item["location"])))
 
     return training_set
 
@@ -158,6 +159,17 @@ def predict(classifier, item):
     print(item)
     predict_set, locations = prepare_predict_item(item)
     for idx, l in enumerate(locations):
-        print("predicting for location '{0}': {1}".format(l, classifier.classify(predict_set[idx])))
+        dist = classifier.prob_classify(predict_set[idx])
+        result = "predicting for location '{0}': ".format(l)
+        predictions = []
+        for label in dist.samples():
+            if (parseDecisionResult(label)):
+                predictions.append("{0} ({1:.2f}%)".format(parseDecisionLabel(label), dist.prob(label) * 100))
+            # result += parseDecision(label)
+            # result += " with accuracy "
+            # result += dist.prob(label) * 100
+            # print("predicting for location '{0}': {1} {2}".format(l, label, dist.prob(label)))
+        # print("predicting for location '{0}': {1}".format(l, classifier.prob(predict_set[idx])))
+        print("predicting for location '{0}': {1}".format(l, ", ".join(predictions)))
 
 

@@ -65,6 +65,17 @@ Result is stored in `./data/feature-set.json` in intermediate format:
 python ./classifier.py $INDEX # where $INDEX is index of item to predict in raw dataset. Default is last
 ```
 
+Sample output:
+
+```
+predicting for location 'Bavaria': location city (30.00%)
+predicting for location 'Europe': location city (26.55%)
+predicting for location 'Germany': location city (31.42%)
+predicting for location 'Bavaria': location city (18.83%)
+predicting for location 'French': location city (6.04%)
+predicting for location 'Giebelstadt': location city (15.75%)
+```
+
 ## Printing list of extracted features per entry
 
 ```bash

@@ -1,4 +1,5 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
+from constants import indexToLocationType
 import json, os, sys
 
 sparql = SPARQLWrapper("http://dbpedia.org/sparql")
@@ -67,16 +68,16 @@ def peformQuery(q):
     sparql.setReturnFormat(JSON)
     return sparql.query().convert()
 
-def performIterateQuery(q):
+def performIterateQuery(q, index):
     results = []
     currentOffset = 0
     while currentOffset < limit:
         print("> performing iterate query; current offset is " + str(currentOffset))
-        results += sparqlResultsToList(peformQuery(makeNextQuery(q, currentOffset)))
+        results += sparqlResultsToList(peformQuery(makeNextQuery(q, currentOffset)), index)
         currentOffset += endpointLimit
     return results
 
-def sparqlResultsToList(results):
+def sparqlResultsToList(results, index):
     targetJSON = []
     for result in results["results"]["bindings"]:
 
@@ -91,7 +92,8 @@ def sparqlResultsToList(results):
         targetJSON.append({
             "company": result["companyNameStr"]["value"].strip(),
             "location": result["locationNameStr"]["value"].strip(),
-            "abstract": result["abstractStr"]["value"].strip()
+            "abstract": result["abstractStr"]["value"].strip(),
+            "locationType": index
         })
 
 
@@ -103,7 +105,7 @@ def queryAndMerge():
     targetJSON = []
     for idx, q in enumerate(queries):
         print("performing {0} query...".format(idx + 1))
-        nthResult = performIterateQuery(q)
+        nthResult = performIterateQuery(q, idx + 1)
         targetJSON += nthResult
         print("got {0} items".format(len(nthResult)))
     print("total items count is {0}; fitering to find only abstracts with company name and location...".format(len(targetJSON)))

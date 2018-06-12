@@ -33,4 +33,4 @@ def process_classifier(clf, name):
     predict(classifier, target_item)
 
 process_classifier(nltk.NaiveBayesClassifier, "Naive Bayes classifier")
-process_classifier(nltk.DecisionTreeClassifier, "Decision tree classifier")
+# process_classifier(nltk.DecisionTreeClassifier, "Decision tree classifier")

@@ -81,3 +81,9 @@ predicting for location 'Giebelstadt': location city (15.75%)
 ```bash
 python ./test.py $INDEX # where $INDEX is index of item to predict in raw dataset
 ```
+
+## Constructing wrong and correct datasets
+
+```bash
+python ./prepare-correct-and-wrong-classification-sets.py $COUNT # where $COUNT is number of items to classify
+```

@@ -21,3 +21,7 @@ def parseDecisionResult(code):
 def parseDecisionLabel(code):
     parts = code.split(".")
     return indexToLocationType[int(parts[0])]
+
+def parseDecisionLabelIndex(code):
+    parts = code.split(".")
+    return parts[0]

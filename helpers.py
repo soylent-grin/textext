@@ -172,4 +172,38 @@ def predict(classifier, item):
         # print("predicting for location '{0}': {1}".format(l, classifier.prob(predict_set[idx])))
         print("predicting for location '{0}': {1}".format(l, ", ".join(predictions)))
 
+def prepare_correct_wrong_set(raw_set, train_set):
+    classifier = nltk.NaiveBayesClassifier.train(train_set)
+    print(classifier.show_most_informative_features(5))
+    correct = []
+    wrong = []
+
+    for index, item in enumerate(raw_set):
+        sys.stdout.write("classifying entry {0}... \r".format(str(index + 1)))
+        sys.stdout.flush()
+        predict_set, locations = prepare_predict_item(item)
+        isCorrect = False
+        for idx, l in enumerate(locations):
+            prediction = classifier.classify(predict_set[idx])
+            if (parseDecisionResult(prediction)):
+                decisionIndex = parseDecisionLabelIndex(prediction)
+                if decisionIndex == str(item["locationType"]):
+                    isCorrect = True
+
+
+        result_item = {
+            "location": item["location"],
+            "company": item["company"],
+            "abstract": item["abstract"],
+            "features": [{ 'location':location, 'features': predict_set[i]} for i, location in enumerate(locations)]
+        }
+
+        if (isCorrect):
+            correct.append(result_item)
+        else:
+            wrong.append(result_item)
+
+    print("{0} correct items, {1} wrong items".format(len(correct), len(wrong)))
+
+    return correct, wrong
 

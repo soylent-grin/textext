@@ -1,7 +1,7 @@
 import json, os, sys
 import nltk
 
-from helpers import predict, prepare_training_set
+from helpers import predict, prepare_training_set, process_classifier
 
 featuresets = json.load(open('./data/feature-set.json'))
 raw = json.load(open('./data/raw.json'))

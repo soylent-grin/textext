@@ -1,35 +1,32 @@
 import json, os, sys
 import nltk
 
-# from helpers import prepare_training_set
+from helpers import prepare_training_set
 
 raw = json.load(open('./data/raw.json'))
 
 index = int(sys.argv[1])
 
 print(raw[index])
-# print((prepare_training_set(raw[index:index + 1])))
+print((prepare_training_set(raw[index:index + 1])))
 
-import spacy
-nlp = spacy.load('en_coref_sm')
-doc = nlp(raw[index]["abstract"])
+# import spacy
+# nlp = spacy.load('en_coref_sm')
+# doc = nlp(raw[index]["abstract"])
 
-print("=======")
-
-print(doc._.coref_clusters)
-print(doc._.coref_resolved)
-#print(doc._.coref_clusters[0].mentions)
+# print(doc._.coref_clusters)
+# print(doc._.coref_clusters[1].mentions)
 # print(doc._.coref_clusters[1].mentions[-1])
 # print(doc._.coref_clusters[1].mentions[-1]._.coref_cluster.main)
 
-# token = doc[0]
-# print("token is: ", token)
+# token = doc[-1]
 # print(token._.in_coref)
 # print(token._.coref_clusters)
 
 # span = doc[-1:]
 # print(span._.is_coref)
 # print(span._.coref_cluster.main)
+# print(span._.coref_cluster.main._.coref_cluster)
 
 # mentions = [{'start':    span.start_char,
 #              'end':      span.end_char,

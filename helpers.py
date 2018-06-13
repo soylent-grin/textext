@@ -1,10 +1,7 @@
 import nltk
 from nltk import Tree
 from constants import *
-
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+import spacy
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
@@ -128,8 +125,7 @@ def prepare_training_set(raw_set):
     training_set = []
 
     for index, item in enumerate(raw_set):
-        sys.stdout.write("processing entry {0}... \r".format(str(index + 1)))
-        sys.stdout.flush()
+        print("processing entry {0}... \r".format(str(index + 1)), end='', flush=True)
         annotated_item = annotate(item)
         for idx, sent in enumerate(annotated_item["abstract_annotated"]):
             locations = extract_locations_from_sent(sent)
@@ -179,8 +175,7 @@ def prepare_correct_wrong_set(raw_set, train_set):
     wrong = []
 
     for index, item in enumerate(raw_set):
-        sys.stdout.write("classifying entry {0}... \r".format(str(index + 1)))
-        sys.stdout.flush()
+        print("classifying entry {0}... \r".format(str(index + 1)), end='', flush=True)
         predict_set, locations = prepare_predict_item(item)
         isCorrect = False
         for idx, l in enumerate(locations):
@@ -207,3 +202,13 @@ def prepare_correct_wrong_set(raw_set, train_set):
 
     return correct, wrong
 
+def replace_coreferences(raw):
+    print("replacing coreferences...")
+    nlp = spacy.load('en_coref_sm')
+
+    for index, item in enumerate(raw):
+        print("processing entry {0}... \r".format(str(index + 1)), end='', flush=True)
+        doc = nlp(item["abstract"])
+        item["abstract"] = doc._.coref_resolved
+
+    return raw

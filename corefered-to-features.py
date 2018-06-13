@@ -4,7 +4,7 @@ from helpers import prepare_training_set
 
 print("hello; reading raw data...")
 
-raw = json.load(open('./data/raw.json'))
+raw = json.load(open('./data/raw-with-replaced-coreferences.json'))
 
 print("done; extracting features...")
 

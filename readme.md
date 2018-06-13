@@ -11,6 +11,17 @@ Maybe we'll use pure NLP methods (based on NLTK named entity recognition and rel
 
 ## Prereq
 
+Due to neuralcoref issue with models pipeline only works with python 3 now. Try [pyenv](https://github.com/pyenv/pyenv) for python version management (and do not forget about `sudo apt-get install libsqlite3-dev`)
+
+
+Install neuralcoref from repo:
+```bash
+git clone https://github.com/huggingface/neuralcoref.git
+cd neuralcoref
+pip install -e .
+```
+
+Install main requirements:
 ```bash
 pip install -r requirements.txt
 ```
@@ -33,10 +44,16 @@ Result is stored in `./data/raw.json` in intermediate format:
   ...
 ```
 
+## Replacing coreferences
+```bash
+python ./raw-to-corefered.py$COUNT # $COUNT is number of first raw entries to parse. Default is 1000
+```
+Result is stored in `./data/raw-with-replaced-coreferences.json`; it looks the same as raw entries, except coreferences are replaced by the main mention.
+
 ## Extracting features
 
 ```bash
-python ./raw-to-featureset.py $COUNT # $COUNT is number of first raw entries to annotate. Default is 1000
+python ./corefered-to-featureset.py $COUNT # $COUNT is number of first raw entries to annotate. Default is 1000
 ```
 
 Result is stored in `./data/feature-set.json` in intermediate format:

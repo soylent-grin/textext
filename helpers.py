@@ -140,6 +140,9 @@ def prepare_predict_item(item):
     predict_set = []
     target_locations = []
 
+    nlp = spacy.load('en_coref_sm')
+    doc = nlp(item["abstract"])
+    item["abstract"] = doc._.coref_resolved
     annotated_item = annotate(item)
     for idx, sent in enumerate(annotated_item["abstract_annotated"]):
         locations = extract_locations_from_sent(sent)
@@ -150,23 +153,22 @@ def prepare_predict_item(item):
 
     return (predict_set, target_locations)
 
-def predict(classifier, item):
+def predict(classifier, item, is_binary = False):
     print("trying to predict location for item: ")
     print(item)
     predict_set, locations = prepare_predict_item(item)
     for idx, l in enumerate(locations):
-        dist = classifier.prob_classify(predict_set[idx])
-        result = "predicting for location '{0}': ".format(l)
-        predictions = []
-        for label in dist.samples():
-            if (parseDecisionResult(label)):
-                predictions.append("{0} ({1:.2f}%)".format(parseDecisionLabel(label), dist.prob(label) * 100))
-            # result += parseDecision(label)
-            # result += " with accuracy "
-            # result += dist.prob(label) * 100
-            # print("predicting for location '{0}': {1} {2}".format(l, label, dist.prob(label)))
-        # print("predicting for location '{0}': {1}".format(l, classifier.prob(predict_set[idx])))
-        print("predicting for location '{0}': {1}".format(l, ", ".join(predictions)))
+        result = ""
+        if is_binary:
+            print("predicting for location '{0}': {1}".format(l, classifier.classify(predict_set[idx])))
+        else:
+            dist = classifier.prob_classify(predict_set[idx])
+            result = "predicting for location '{0}': ".format(l)
+            predictions = []
+            for label in dist.samples():
+                if (parseDecisionResult(label)):
+                    predictions.append("{0} ({1:.2f}%)".format(parseDecisionLabel(label), dist.prob(label) * 100))
+            print("predicting for location '{0}': {1}".format(l, ", ".join(predictions)))
 
 def prepare_correct_wrong_set(raw_set, train_set):
     classifier = nltk.NaiveBayesClassifier.train(train_set)
@@ -212,3 +214,9 @@ def replace_coreferences(raw):
         item["abstract"] = doc._.coref_resolved
 
     return raw
+
+def convert_to_binary(featuresets):
+    for item in featuresets:
+        item[1] = parseDecisionResult(item[1])
+
+    return featuresets

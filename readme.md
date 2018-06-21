@@ -46,7 +46,7 @@ Result is stored in `./data/raw.json` in intermediate format:
 
 ## Replacing coreferences
 ```bash
-python ./raw-to-corefered.py$COUNT # $COUNT is number of first raw entries to parse. Default is 1000
+python ./raw-to-corefered.py $COUNT # $COUNT is number of first raw entries to parse. Default is 1000
 ```
 Result is stored in `./data/raw-with-replaced-coreferences.json`; it looks the same as raw entries, except coreferences are replaced by the main mention.
 
@@ -79,18 +79,17 @@ Result is stored in `./data/feature-set.json` in intermediate format:
 ## Evaluating the model
 
 ```bash
-python ./classifier.py $INDEX # where $INDEX is index of item to predict in raw dataset. Default is last
+# $INDEX is index of item to predict in raw dataset. Default is last.
+# $IS_BINARY defines whether we use 8 (y\n location country, y\n locatin city, etc) location classes or 2(y\n). Default is False (8 classes)
+python ./classifier.py $INDEX $IS_BINARY
 ```
 
 Sample output:
 
 ```
-predicting for location 'Bavaria': location city (30.00%)
-predicting for location 'Europe': location city (26.55%)
-predicting for location 'Germany': location city (31.42%)
-predicting for location 'Bavaria': location city (18.83%)
-predicting for location 'French': location city (6.04%)
-predicting for location 'Giebelstadt': location city (15.75%)
+predicting for location 'Italian': location city (3.91%), location country (4.69%)
+predicting for location 'Turin': location city (97.04%), location country (0.92%)
+predicting for location 'Italy': location city (96.25%), location country (1.20%)
 ```
 
 ## Printing list of extracted features per entry

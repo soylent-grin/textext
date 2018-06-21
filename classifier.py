@@ -1,22 +1,29 @@
 import json, os, sys
 import nltk
 
-from helpers import predict, prepare_training_set
+from helpers import predict, prepare_training_set, convert_to_binary
 
 featuresets = json.load(open('./data/feature-set.json'))
 raw = json.load(open('./data/raw.json'))
 
+predict_index = len(raw) - 1
+is_binary = False
+if len(sys.argv) > 1:
+    predict_index = int(sys.argv[1])
+if len(sys.argv) > 2:
+    is_binary = bool(sys.argv[2])
+
 print("overall featureset size: {0}".format(len(featuresets)))
+
+if is_binary:
+    print("converting featuresets to binary")
+    featuresets = convert_to_binary(featuresets)
 
 train_to_test_ratio = 0.8
 
 divide_index = int(len(featuresets) * train_to_test_ratio)
 
 train_set, test_set = featuresets[:divide_index], featuresets[divide_index:]
-
-predict_index = len(raw) - 1
-if len(sys.argv) > 1:
-    predict_index = int(sys.argv[1])
 
 def process_classifier(clf, name):
     print("training {0} with {1} items...".format(name, len(train_set)))
@@ -30,7 +37,7 @@ def process_classifier(clf, name):
 
     print("done; classifying entry #{0} from raw dataset:".format(predict_index))
     target_item = raw[predict_index]
-    predict(classifier, target_item)
+    predict(classifier, target_item, is_binary)
 
 process_classifier(nltk.NaiveBayesClassifier, "Naive Bayes classifier")
 # process_classifier(nltk.DecisionTreeClassifier, "Decision tree classifier")

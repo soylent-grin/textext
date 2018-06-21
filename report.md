@@ -2,7 +2,7 @@
 
 Prepare the classifier, that would predict company location from the given DBPedia abstract about the company
 
-# Concept of algorithm
+# Main algorithm
 
 - Use DBPedia SPARQL endpoint to fetch list of companies, their locations and abstract from article about the company. Location type may be `location city`, `location country`, `foundation place` and `headquarted location` according to DBPedia labels.
 - Replace all coreferences, found in abstract, with the main meaning.
@@ -22,7 +22,7 @@ Prepare the classifier, that would predict company location from the given DBPed
 
 With ~24k crawled entries we get around 120k featuresets to train with. Train\test split ratio is 0.8.
 Accuracy for binary classification: with coreference step - 78%, without - 74%.
-Accuracy for non-binary classification is much more mess and not usable with current feature extraction model: with coreference step - 1.3%, without - 1.2%.
+Accuracy for non-binary classification is much more mess for current feature extraction model: with coreference step - 1.3%, without - 1.2%. This may be caused by indistinguishable features for different location types; however, the probability estimation of such classifier still may be useful. 
 
 # Used tools
 

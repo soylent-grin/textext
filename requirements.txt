@@ -3,3 +3,4 @@ sparqlwrapper
 nltk
 spacy
 https://github.com/huggingface/neuralcoref-models/releases/download/en_coref_sm-3.0.0/en_coref_sm-3.0.0.tar.gz
+networkx

@@ -3,6 +3,9 @@ from nltk import Tree
 from constants import *
 import spacy
 
+import networkx as nx
+nlp = spacy.load('en_coref_sm')
+
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('maxent_ne_chunker')
@@ -58,9 +61,29 @@ def annotate(raw_entry):
 
     return raw_entry
 
-def get_distance(company, location, sent):
-    # TODO
-    return 1;
+def extract_dependency_distance(company, location, raw_sent):
+    try:
+        company_replacement = "nokia"
+        location_replacement = "america"
+        # print("replacing {0} to {1}, {2} to {3}".format(company, company_replacement, location, location_replacement))
+        prepared_sent = raw_sent.replace(company, company_replacement).replace(location, location_replacement)
+        # print(prepared_sent)
+        document = nlp(prepared_sent)
+
+        edges = []
+        for token in document:
+            # FYI https://spacy.io/docs/api/token
+            for child in token.children:
+                edges.append((token.lower_, child.lower_))
+
+        graph = nx.Graph(edges)
+
+        path = nx.shortest_path_length(graph, source=company_replacement, target=location_replacement);
+        # print(path)
+        return path
+    except:
+        # print("Error occured while getting dependency distance on company {0} and location {1}".format(company, location))
+        return -1
 
 def get_words_between(company, location, raw_sent):
     words = []
@@ -75,6 +98,13 @@ def get_words_between(company, location, raw_sent):
 def extract_features_by_location(company, location, raw_sent):
     features = {}
     words_between = get_words_between(company, location, raw_sent)
+
+    # print("raw sent is: {0}".format(raw_sent))
+
+    if (len(words_between) > 0):
+        features["dependency_distance"] = extract_dependency_distance(company, location, raw_sent)
+    else:
+        features["dependency_distance"] = -1
 
     features["distance"] = len(words_between)
     for vb in extract_verbs(words_between):

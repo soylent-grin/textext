@@ -11,6 +11,54 @@ nltk.download('averaged_perceptron_tagger')
 nltk.download('maxent_ne_chunker')
 nltk.download('words')
 
+LOCATION_RELATED_VERBS = ["locate", "headquart", "found", "base", "establish", "operate"]
+
+# spacy helpers
+
+def extract_locations_from_sent_spacy(doc):
+    locations = []
+
+    for ent in doc.ents:
+        if (ent.label_ == "GPE"):
+            locations.append(ent.text)
+
+    return locations
+
+def extract_dependency_distance_spacy(company, location, doc):
+    # TODO
+    return -1
+
+def extract_location_related_verbs_spacy(doc):
+    verbs = []
+
+    for token in doc:
+        if token.pos_ == "VERB":
+            for index, v in enumerate(LOCATION_RELATED_VERBS):
+                if v in token.text:
+                    verbs.append(token.text)
+
+    return verbs;
+
+def extract_verbs_spacy(doc):
+    verbs = []
+
+    for token in doc:
+        if (token.pos_ == "VERB"):
+            verbs.append(token.text)
+
+    return verbs;
+
+def extract_nouns_spacy(doc):
+    nouns = []
+
+    for token in doc:
+        if (token.pos_ == "NOUN"):
+            nouns.append(token.text)
+
+    return nouns;
+
+# nltk helpers
+
 def extract_locations_from_sent(sent):
     locations = []
 
@@ -37,12 +85,12 @@ def extract_verbs(sent):
             verbs.append(word)
     return verbs;
 
-def extract_nowns(sent):
-    nowns = []
+def extract_nouns(sent):
+    nouns = []
     for (word, label) in sent:
         if label == 'NN':
-            nowns.append(word)
-    return nowns;
+            nouns.append(word)
+    return nouns;
 
 def annotate(raw_entry):
     sentences = nltk.sent_tokenize(raw_entry["abstract"])
@@ -95,11 +143,19 @@ def get_words_between(company, location, raw_sent):
             words = nltk.pos_tag(nltk.word_tokenize(substr))
     return words
 
+def get_words_between_spacy(company, location, raw_sent):
+    words = []
+    company_index = raw_sent.find(company)
+    if company_index > -1:
+        location_index = raw_sent.find(location)
+        if location_index > -1:
+            substr = raw_sent[company_index + len(company) + 1:location_index - 1]
+            words = nlp(substr)
+    return words
+
 def extract_features_by_location(company, location, raw_sent):
     features = {}
     words_between = get_words_between(company, location, raw_sent)
-
-    # print("raw sent is: {0}".format(raw_sent))
 
     if (len(words_between) > 0):
         features["dependency_distance"] = extract_dependency_distance(company, location, raw_sent)
@@ -109,10 +165,31 @@ def extract_features_by_location(company, location, raw_sent):
     features["distance"] = len(words_between)
     for vb in extract_verbs(words_between):
         features["VB({0})".format(vb)] = True
-    for nown in extract_nowns(words_between):
+    for nown in extract_nouns(words_between):
         features["NN({0})".format(nown)] = True
     for vb in extract_location_related_verbs(words_between):
         features["LOCATION_VERB({0})".format(vb)] = True
+
+    return features
+
+def extract_features_by_location_spacy(company, location, sent, doc):
+    features = {}
+
+    words_between = get_words_between_spacy(company, location, sent)
+
+    features["distance"] = len(words_between)
+
+    if (len(words_between) > 0):
+        features["dependency_distance"] = extract_dependency_distance(company, location, sent)
+        features["distance"] = len(words_between)
+        for vb in extract_verbs_spacy(words_between):
+            features["VB({0})".format(vb)] = True
+        for nown in extract_nouns_spacy(words_between):
+            features["NN({0})".format(nown)] = True
+        for vb in extract_location_related_verbs_spacy(words_between):
+            features["LOCATION_VERB({0})".format(vb)] = True
+    else:
+        features["dependency_distance"] = -1
 
     return features
 
@@ -141,7 +218,7 @@ def extract_features(annotated_entry):
     #     words_count += len(sent)
     #     for vb in extract_verbs(sent):
     #         features["VB({0})".format(vb)] = True
-    #     for nown in extract_nowns(sent):
+    #     for nown in extract_nouns(sent):
     #         features["NN({0})".format(nown)] = True
     #     for vb in extract_location_related_verbs(sent):
     #         features["LOCATION_VERB({0})".format(vb)] = True
@@ -150,8 +227,7 @@ def extract_features(annotated_entry):
 
     return featuresets
 
-def prepare_training_set(raw_set):
-    print("preparing train set...")
+def prepare_training_set_nltk(raw_set):
     training_set = []
 
     for index, item in enumerate(raw_set):
@@ -165,14 +241,35 @@ def prepare_training_set(raw_set):
 
     return training_set
 
+def prepare_training_set_spacy(raw_set):
+    training_set = []
 
-def prepare_predict_item(item):
+    for index, item in enumerate(raw_set):
+        print("processing entry {0}... \r".format(str(index + 1)), end='', flush=True)
+        sentences = nltk.sent_tokenize(item["abstract"])
+        for idx, sent in enumerate(sentences):
+            doc = nlp(sent)
+            locations = extract_locations_from_sent_spacy(doc)
+            for l in locations:
+                featureset = extract_features_by_location_spacy(item["company"], l, sent, doc)
+                training_set.append((featureset, constructDecision(item["locationType"], l == item["location"])))
+
+    return training_set
+
+def prepare_training_set(raw_set, ne_detection_type):
+    print("preparing train set (ne_detection_type is {0})...".format(ne_detection_type))
+    if ne_detection_type == 'nltk':
+        return prepare_training_set_nltk(raw_set)
+    elif ne_detection_type == 'spacy':
+        return prepare_training_set_spacy(raw_set)
+    else:
+        print("unknown ne_detection_type: {0}".format(ne_detection_type))
+        return []
+
+def prepare_predict_item_nltk(item):
     predict_set = []
     target_locations = []
 
-    nlp = spacy.load('en_coref_sm')
-    doc = nlp(item["abstract"])
-    item["abstract"] = doc._.coref_resolved
     annotated_item = annotate(item)
     for idx, sent in enumerate(annotated_item["abstract_annotated"]):
         locations = extract_locations_from_sent(sent)
@@ -183,10 +280,38 @@ def prepare_predict_item(item):
 
     return (predict_set, target_locations)
 
-def predict(classifier, item, is_binary = False):
+def prepare_predict_item_spacy(item):
+    predict_set = []
+    target_locations = []
+
+    sentences = nltk.sent_tokenize(item["abstract"])
+    for idx, sent in enumerate(sentences):
+        doc = nlp(sent)
+        locations = extract_locations_from_sent_spacy(doc)
+        for l in locations:
+            featureset = extract_features_by_location_spacy(item["company"], l, sent, doc)
+            predict_set.append(featureset)
+            target_locations.append(l)
+
+    return (predict_set, target_locations)
+
+def prepare_predict_item(item, ne_detection_type):
+    print("preparing prediction item (ne_detection_type is {0})...".format(ne_detection_type))
+    nlp = spacy.load('en_coref_sm')
+    doc = nlp(item["abstract"])
+    item["abstract"] = doc._.coref_resolved
+    if ne_detection_type == 'nltk':
+        return prepare_predict_item_nltk(item)
+    elif ne_detection_type == 'spacy':
+        return prepare_predict_item_spacy(item)
+    else:
+        print("unknown ne_detection_type: {0}".format(ne_detection_type))
+        return ([], [])
+
+def predict(classifier, item, is_binary = False, ne_detection_type = "nltk"):
     print("trying to predict location for item: ")
     print(item)
-    predict_set, locations = prepare_predict_item(item)
+    predict_set, locations = prepare_predict_item(item, ne_detection_type)
     for idx, l in enumerate(locations):
         result = ""
         if is_binary:

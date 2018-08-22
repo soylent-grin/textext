@@ -46,14 +46,16 @@ Result is stored in `./data/raw.json` in intermediate format:
 
 ## Replacing coreferences
 ```bash
-python ./raw-to-corefered.py $COUNT # $COUNT is number of first raw entries to parse. Default is 1000
+python ./raw-to-corefered.py $COUNT # $COUNT is number of first raw entries to parse. Default is 1000.
 ```
 Result is stored in `./data/raw-with-replaced-coreferences.json`; it looks the same as raw entries, except coreferences are replaced by the main mention.
 
 ## Extracting features
 
 ```bash
-python ./corefered-to-featureset.py $COUNT # $COUNT is number of first raw entries to annotate. Default is 1000
+# $COUNT is number of first raw entries to annotate. Default is 1000.
+# $NE_TYPE is named entity detection framework ("spacy" or "nltk"). Default is "nltk"
+python ./corefered-to-featureset.py --count=$COUNT --ne-detection-type=$NE_TYPE
 ```
 
 Result is stored in `./data/feature-set.json` in intermediate format:
@@ -79,9 +81,10 @@ Result is stored in `./data/feature-set.json` in intermediate format:
 ## Evaluating the model
 
 ```bash
-# $INDEX is index of item to predict in raw dataset. Default is last.
-# $IS_BINARY defines whether we use 8 (y\n location country, y\n locatin city, etc) location classes or 2(y\n). Default is False (8 classes)
-python ./classifier.py $INDEX $IS_BINARY
+# $INDEX is index of item to predict in raw dataset. Default is last in raw.json.
+# $IS_BINARY defines whether we use 8 (y\n location country, y\n locatin city, etc) location classes or 2(y\n). Default is false (8 classes).
+# $NE_TYPE is named entity detection framework ("spacy" or "nltk"). Default is "nltk"
+python ./classifier.py --predict-index=$INDEX --is-binary=$IS_BINARY --ne-detection-type=$NE_TYPE
 ```
 
 Sample output:

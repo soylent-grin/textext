@@ -57,6 +57,28 @@ select distinct (str(?companyName) as ?companyNameStr) (str(?locationName) as ?l
       ?location rdfs:label ?locationName .
       filter (langMatches(lang(?companyName),'en') && langMatches(lang(?locationName),'en') && langMatches(lang(?abstract),'en'))
     }
+""",
+"""
+select distinct (str(?companyName) as ?companyNameStr) (str(?locationName) as ?locationNameStr) (str(?abstract) as ?abstractStr)
+    where {
+      ?company a dbo:Company ;
+         rdfs:label ?companyName ;
+         dbo:country ?location ;
+         dbo:abstract ?abstract .
+      ?location rdfs:label ?locationName .
+      filter (langMatches(lang(?companyName),'en') && langMatches(lang(?locationName),'en') && langMatches(lang(?abstract),'en'))
+    }
+""",
+"""
+select distinct (str(?companyName) as ?companyNameStr) (str(?locationName) as ?locationNameStr) (str(?abstract) as ?abstractStr)
+    where {
+      ?company a dbo:Company ;
+         rdfs:label ?companyName ;
+         dbo:state ?location ;
+         dbo:abstract ?abstract .
+      ?location rdfs:label ?locationName .
+      filter (langMatches(lang(?companyName),'en') && langMatches(lang(?locationName),'en') && langMatches(lang(?abstract),'en'))
+    }
 """
 ]
 

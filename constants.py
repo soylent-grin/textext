@@ -2,7 +2,9 @@ indexToLocationType = {
     1: "location city",
     2: "location country",
     3: "foundation place",
-    4: "headquarted location"
+    4: "headquarted location",
+    5: "country",
+    6: "state"
 }
 
 def constructDecision(locationType, isTrue):

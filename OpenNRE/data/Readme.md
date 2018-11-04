@@ -9,8 +9,8 @@ and we did an evaluation of those with OpenNRE.
 
 Corpus create setting default: (for more info see parent directory Readme.md)
 
-Setting | Default value | quick explanation
---------------------------------------------
+| Setting | Default value | quick explanation |
+ --------------------------------------------
 | REPLACE_COMPANY_NAME            | True | replace company name with 'IBM' |
 | BINARY_LOCATION                 | True | only use generic 'locatedIn' as location relation (instead of fine-grained relations) |
 | SENTENCE_MUST_CONTAIN_COMPANY   | True | only include sentences in the result that contain the company_name |

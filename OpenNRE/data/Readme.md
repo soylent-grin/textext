@@ -11,11 +11,11 @@ Corpus create setting default: (for more info see parent directory Readme.md)
 
 Setting | Default value | quick explanation
 --------------------------------------------
-REPLACE_COMPANY_NAME            | True | replace company name with 'IBM' 
-BINARY_LOCATION                 | True | only use generic 'locatedIn' as location relation (instead of fine-grained relations)
-SENTENCE_MUST_CONTAIN_COMPANY   | True | only include sentences in the result that contain the company_name    
-FIRST_SENTENCE_ONLY             | True |  only take the first sentence from the abstract
-SKIP_IF_NOT_FOUND_IN_EMBEDDINGS | True | skip sentences where not both company_name and location_name are in the word embedding vocabulary 
+| REPLACE_COMPANY_NAME            | True | replace company name with 'IBM' |
+| BINARY_LOCATION                 | True | only use generic 'locatedIn' as location relation (instead of fine-grained relations) |
+| SENTENCE_MUST_CONTAIN_COMPANY   | True | only include sentences in the result that contain the company_name |
+| FIRST_SENTENCE_ONLY             | True |  only take the first sentence from the abstract |
+| SKIP_IF_NOT_FOUND_IN_EMBEDDINGS | True | skip sentences where not both company_name and location_name are in the word embedding vocabulary |
 
 ## OpenNRE Settings used:
 

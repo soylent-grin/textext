@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Author: Gerhard Wohlgenannt / ITMO Univ / 2018
+# Author: Gerhard Wohlgenannt / ITMO Univ. / 2018
 
 import sys
 sys.path.append('..')

@@ -13,6 +13,6 @@ else:
     for no, (a,b) in enumerate(datasets):
         i, j = json.load(open(a)), json.load(open(b)) 
 
-        print('\nSize of dataset: train', datasets[no], '.json:', len(i), '--- test', datasets[no], '.json:', len(j))
+        print('\nSize of dataset: train', datasets[no][0], '.json:', len(i), '--- test', datasets[no][1], '.json:', len(j))
 
 

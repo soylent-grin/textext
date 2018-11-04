@@ -9,12 +9,6 @@ and we did an evaluation of those with OpenNRE.
 
 Corpus create setting default: (for more info see parent directory Readme.md)
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
-
-
 
 Setting | Default value | quick explanation 
 --------|---------------|-------------------
@@ -35,28 +29,35 @@ SKIP_IF_NOT_FOUND_IN_EMBEDDINGS | True | skip sentences where not both company_n
 
 ### train1/test1 
 
-Settings: all defaults 
+
+
+*Settings:* all defaults 
+*Size of dataset:*  train1.json : 14536 ---  test1.json : 3635
 
 Output of last epoch (default died because of out-of-memory):
 ```    
-    After 24 Epochs, no more mem
-    ###### Epoch 24 ######
-    epoch 24 step 12 time 4.39 | loss: 0.272173, not NA accuracy: 0.894049, accuracy: 0.888462
-    Average iteration time: 5.466746
-    Testing...
-    Tensor("word_embedding_24/concat:0", shape=(400002, 50), dtype=float32)
-    Tensor("word_embedding_24/embedding_lookup/Identity:0", shape=(?, 120, 50), dtype=float32)
-    Calculating weights_table...
-    Finish calculating
-    [TEST] step 4 | not NA accuracy: 0.852632, accuracy: 0.810000
-    [TEST] auc: 0.9124003984741313
+###### Epoch 14 ######
+epoch 14 step 12 time 4.35 | loss: 0.411964, not NA accuracy: 0.848573, accuracy: 0.843269
+Average iteration time: 5.065202
+Testing...
+Tensor("word_embedding_14/concat:0", shape=(400002, 50), dtype=float32)
+Tensor("word_embedding_14/embedding_lookup:0", shape=(?, 120, 50), dtype=float32)
+Calculating weights_table...
+Finish calculating
+[TEST] step 4 | not NA accuracy: 0.878947, accuracy: 0.835000
+[TEST] auc: 0.911017871741
+Finish testing
+Best model, storing...
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
 ```    
 
 ### train2/test2:
 
 
 
-Settings: defaults, except `REPLACE_COMPANY_NAME=False`
+*Settings:* defaults, except `REPLACE_COMPANY_NAME=False`
+*Size of dataset:*  train2.json : 464   ---  test2.json : 116
 
 Output of last epoch (default died because of out-of-memory):
 ```    
@@ -76,7 +77,10 @@ Output of last epoch (default died because of out-of-memory):
 
 ### train3/test3: 
 
-Settings: defaults, except `BINARY_LOCATION=False`
+*Settings:* defaults, except `BINARY_LOCATION=False`
+*Size of dataset:*  train3.json : 14536 ---  test3.json : 3635
+
+
 
 Output of last epoch (default died because of out-of-memory):
 ```    
@@ -98,7 +102,8 @@ Output of last epoch (default died because of out-of-memory):
 
 ### train4/test4: 
 
-Settings: defaults, `SKIP_IF_NOT_FOUND_IN_EMBEDDINGS=False, FIRST_SENTENCE_ONLY=False`
+*Settings:* defaults, `SKIP_IF_NOT_FOUND_IN_EMBEDDINGS=False, FIRST_SENTENCE_ONLY=False`
+*Size of dataset:*  train4.json : 38145 ---  test4.json : 9537
 
 Output of last epoch (default died because of out-of-memory)
 ```    
